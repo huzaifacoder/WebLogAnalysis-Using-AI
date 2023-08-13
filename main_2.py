@@ -1,10 +1,14 @@
 import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 from datetime import datetime
+import os
+#  read csv file
+#duplicate = pd.read_csv('\\Database\\weblog.csv', squeeze=True)
 
-duplicate = pd.read_csv('../weblog.csv', squeeze=True)
-
-data = pd.DataFrame(duplicate)
+cwd_join = os.getcwd() + "\\"
+database_rel = os.path.relpath('Database\\weblog.csv')
+database_abs = cwd_join + database_rel
+data = pd.read_csv(database_abs)
 
 
 data['Time'] = data['Time'].map(lambda x: x.lstrip('['))

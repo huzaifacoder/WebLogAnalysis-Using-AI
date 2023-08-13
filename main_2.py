@@ -2,7 +2,7 @@ import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 from datetime import datetime
 
-duplicate = pd.read_csv('weblog.csv', squeeze=True)
+duplicate = pd.read_csv('../weblog.csv', squeeze=True)
 
 data = pd.DataFrame(duplicate)
 
@@ -89,12 +89,37 @@ import streamlit as st
 
 st.set_page_config(page_title = "Web Log Analysis", page_icon = ":desktop_computer:")
 
-st.bar_chart(data['Status'].value_counts().head(40))
 
-#data["day"] = data[pd.to_numeric(data['day'], errors='coerce').notnull()]
-st.bar_chart(data['day'].value_counts().head(40))
+# Function to display Status distribution plot
+def display_status_distribution():
+    st.markdown("## Status Distribution")
+    st.bar_chart(data['Status'].value_counts().head(40))
 
-st.bar_chart(data['month'].value_counts().head(40))
+# Function to display Day-wise distribution plot
+def display_daywise_distribution():
+    st.markdown("## Day-wise Distribution")
+    st.bar_chart(data['day'].value_counts().head(40))
 
-st.bar_chart(data['Methods'].value_counts().head(40))
+# Function to display Month-wise distribution plot
+def display_monthwise_distribution():
+    st.markdown("## Month-wise Distribution")
+    st.bar_chart(data['month'].value_counts().head(40))
 
+# Function to display HTTP Methods distribution plot
+def display_methods_distribution():
+    st.markdown("## HTTP Methods Distribution")
+    st.bar_chart(data['Methods'].value_counts().head(40))
+
+# Sidebar navigation
+selected_page = st.sidebar.radio("Select a page:",
+    ("Status Distribution", "Day-wise Distribution", "Month-wise Distribution", "HTTP Methods Distribution"))
+
+# Display selected page content
+if selected_page == "Status Distribution":
+    display_status_distribution()
+elif selected_page == "Day-wise Distribution":
+    display_daywise_distribution()
+elif selected_page == "Month-wise Distribution":
+    display_monthwise_distribution()
+elif selected_page == "HTTP Methods Distribution":
+    display_methods_distribution()

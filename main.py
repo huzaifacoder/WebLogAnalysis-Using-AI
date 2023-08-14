@@ -1,9 +1,6 @@
-import numpy as np  # linear algebra
-import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
-from datetime import datetime
+import numpy as np
+import pandas as pd
 import os
-#  read csv file
-#duplicate = pd.read_csv('\\Database\\weblog.csv', squeeze=True)
 
 cwd_join = os.getcwd() + "\\"
 database_rel = os.path.relpath('Database\\weblog.csv')
@@ -179,3 +176,11 @@ if st.button("Detect Anomalies"):
 
     # Visualize anomalies
     # ... You can create visualizations to show anomalies on time series plots or other relevant charts
+
+    # Count anomalies per IP
+    anomaly_counts = anomalies.groupby('IP').size().reset_index(name='AnomalyCount')
+
+    # Visualize anomalies using a bar chart
+    st.subheader("Anomalies Detected per IP")
+    st.bar_chart(anomaly_counts.set_index('IP'))
+

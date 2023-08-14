@@ -133,7 +133,7 @@ selected_page = st.sidebar.radio("Select a page:",
     ("Status Distribution", "Day-wise Distribution", "Month-wise Distribution", "HTTP Methods Distribution"))
 
 # Display selected page content
-st.markdown("# Combined Visualization")
+st.markdown("# Basic Statistics")
 
 if selected_page == "Status Distribution":
     display_status_distribution()

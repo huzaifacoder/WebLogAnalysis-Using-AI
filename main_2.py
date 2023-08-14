@@ -106,22 +106,35 @@ def display_daywise_distribution():
     st.bar_chart(data['day'].value_counts().head(40))
 
 
+# Function to display Status distribution plot
+def display_status_distribution():
+    return st.bar_chart(data['Status'].value_counts().head(40))
+
+
+# Function to display Day-wise distribution plot
+def display_daywise_distribution():
+    return st.bar_chart(data['day'].value_counts().head(40))
+
+
 # Function to display Month-wise distribution plot
 def display_monthwise_distribution():
-    st.markdown("## Month-wise Distribution")
-    st.bar_chart(data['month'].value_counts().head(40))
+    return st.bar_chart(data['month'].value_counts().head(40))
 
 
 # Function to display HTTP Methods distribution plot
 def display_methods_distribution():
-    st.markdown("## HTTP Methods Distribution")
-    st.bar_chart(data['Methods'].value_counts().head(40))
+    return st.bar_chart(data['Methods'].value_counts().head(40))
+
+
+st.sidebar.header("Basic Statistics Analysis")
 
 # Sidebar navigation
 selected_page = st.sidebar.radio("Select a page:",
     ("Status Distribution", "Day-wise Distribution", "Month-wise Distribution", "HTTP Methods Distribution"))
 
 # Display selected page content
+st.markdown("# Combined Visualization")
+
 if selected_page == "Status Distribution":
     display_status_distribution()
 elif selected_page == "Day-wise Distribution":
@@ -130,7 +143,6 @@ elif selected_page == "Month-wise Distribution":
     display_monthwise_distribution()
 elif selected_page == "HTTP Methods Distribution":
     display_methods_distribution()
-
 
 import pandas as pd
 import numpy as np
@@ -147,9 +159,9 @@ data['Status'] = data['Status']
 from scipy.stats import zscore
 
 # Sidebar content
-st.sidebar.subheader("Anomaly Detection Settings")
+st.sidebar.header("Anomaly Detection Settings")
 threshold = st.sidebar.number_input("Threshold for Z-Score Anomaly Detection", value=2.5)
-
+st.sidebar.write("Best below 1.6 threshold")
 # Main content
 st.title("Traffic Anomaly Detection")
 

@@ -99,15 +99,18 @@ def display_status_distribution():
     st.markdown("## Status Distribution")
     st.bar_chart(data['Status'].value_counts().head(40))
 
+
 # Function to display Day-wise distribution plot
 def display_daywise_distribution():
     st.markdown("## Day-wise Distribution")
     st.bar_chart(data['day'].value_counts().head(40))
 
+
 # Function to display Month-wise distribution plot
 def display_monthwise_distribution():
     st.markdown("## Month-wise Distribution")
     st.bar_chart(data['month'].value_counts().head(40))
+
 
 # Function to display HTTP Methods distribution plot
 def display_methods_distribution():
@@ -127,3 +130,40 @@ elif selected_page == "Month-wise Distribution":
     display_monthwise_distribution()
 elif selected_page == "HTTP Methods Distribution":
     display_methods_distribution()
+
+
+import pandas as pd
+import numpy as np
+import streamlit as st
+from scipy.stats import zscore
+print(data["Time"].head())
+
+# Create features: IP, Time, Status
+data['IP'] = data['IP']
+data['TimeInterval'] = data['Time']  # You can adjust the time interval granularity
+data['Status'] = data['Status']
+
+
+from scipy.stats import zscore
+
+# Sidebar content
+st.sidebar.subheader("Anomaly Detection Settings")
+threshold = st.sidebar.number_input("Threshold for Z-Score Anomaly Detection", value=2.5)
+
+# Main content
+st.title("Traffic Anomaly Detection")
+
+if st.button("Detect Anomalies"):
+    # Calculate z-scores for IP traffic counts within each time interval and status
+    grouped = data.groupby(['TimeInterval', 'IP', 'Status']).size().reset_index(name='TrafficCount')
+    grouped['ZScore'] = grouped.groupby(['TimeInterval', 'Status'])['TrafficCount'].transform(zscore)
+
+    # Identify anomalies based on threshold
+    anomalies = grouped[grouped['ZScore'] > threshold]
+
+    # Display anomalies
+    st.subheader("Detected Anomalies:")
+    st.write(anomalies)
+
+    # Visualize anomalies
+    # ... You can create visualizations to show anomalies on time series plots or other relevant charts

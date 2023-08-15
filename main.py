@@ -110,9 +110,6 @@ def display_methods_distribution():
     st.markdown("#### Methods  Distribution")
     return st.bar_chart(data['Methods'].value_counts().head(40))
 
-
-st.sidebar.header("Basic Statistics Analysis")
-
 select_pages_list = ["Status Distribution", "Day-wise Distribution", "Month-wise Distribution","HTTP Methods Distribution"]
 
 # Display selected page content

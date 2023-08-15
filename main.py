@@ -113,7 +113,8 @@ def display_methods_distribution():
 select_pages_list = ["Status Distribution", "Day-wise Distribution", "Month-wise Distribution","HTTP Methods Distribution"]
 
 # Display selected page content
-st.markdown("# Basic Statistics")
+st.title("Web log Analysis \n---")
+st.markdown("## Basic Statistics")
 
 
 # Sidebar navigation
@@ -147,26 +148,29 @@ import streamlit_vertical_slider as svs
 threshold = st.slider("Threshold for Z-Score Anomaly Detection", min_value=1.0, max_value=1.9, value=1.5, step=0.1)
 st.write("Best below 1.6 threshold")
 # Main content
-st.title("Traffic Anomaly Detection")
+st.markdown("## Traffic Anomaly Detection")
 
-if st.button("Detect Anomalies"):
-    # Calculate z-scores for IP traffic counts within each time interval and status
+
+def detect_anomalies(data, threshold):
     grouped = data.groupby(['TimeInterval', 'IP', 'Status']).size().reset_index(name='TrafficCount')
     grouped['ZScore'] = grouped.groupby(['TimeInterval', 'Status'])['TrafficCount'].transform(zscore)
-
-    # Identify anomalies based on threshold
     anomalies = grouped[grouped['ZScore'] > threshold]
+    return anomalies
 
-    # Display anomalies
+
+def visualize_detected_anomalies(anomalies):
     st.subheader("Detected Anomalies:")
     st.write(anomalies)
+    # Visualization code here
 
-    # Visualize anomalies
-    # ... You can create visualizations to show anomalies on time series plots or other relevant charts
 
-    # Count anomalies per IP
-    anomaly_counts = anomalies.groupby('IP').size().reset_index(name='AnomalyCount')
-
-    # Visualize anomalies using a bar chart
+def visualize_anomalies_per_ip(anomaly_counts):
     st.subheader("Anomalies Detected per IP")
     st.bar_chart(anomaly_counts.set_index('IP'))
+
+if st.button("Detect Anomalies"):
+    threshold_slider = threshold
+    anomalies = detect_anomalies(data, threshold)
+    visualize_detected_anomalies(anomalies)
+    anomaly_counts = anomalies.groupby('IP').size().reset_index(name='AnomalyCount')
+    visualize_anomalies_per_ip(anomaly_counts)

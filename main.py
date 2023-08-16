@@ -145,7 +145,7 @@ from scipy.stats import zscore
 
 import streamlit_vertical_slider as svs
 
-threshold = st.slider("Threshold for Z-Score Anomaly Detection", min_value=1.0, max_value=1.9, value=1.5, step=0.1)
+threshold = st.slider("Threshold for Z-Score Anomaly Detection", min_value=1.0, max_value=1.9, value=1.5, step=0.05)
 st.write("Best below 1.6 threshold")
 # Main content
 st.markdown("## Traffic Anomaly Detection")
@@ -168,9 +168,16 @@ def visualize_anomalies_per_ip(anomaly_counts):
     st.subheader("Anomalies Detected per IP")
     st.bar_chart(anomaly_counts.set_index('IP'))
 
+
 if st.button("Detect Anomalies"):
-    threshold_slider = threshold
+    threshold_slider_val = threshold  # Set your desired threshold
     anomalies = detect_anomalies(data, threshold)
     visualize_detected_anomalies(anomalies)
+
+    # Count anomalies per IP
     anomaly_counts = anomalies.groupby('IP').size().reset_index(name='AnomalyCount')
     visualize_anomalies_per_ip(anomaly_counts)
+
+    # Find IP with the highest TrafficCount
+    ip_with_most_traffic = anomaly_counts.loc[anomaly_counts['AnomalyCount'].idxmax(), 'IP']
+    st.subheader(f"IP with the Most TrafficCount: {ip_with_most_traffic} withn the given treshold")

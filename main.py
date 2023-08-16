@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 
+
 cwd_join = os.getcwd() + "\\"
 database_rel = os.path.relpath('Database\\weblog.csv')
 database_abs = cwd_join + database_rel
@@ -52,35 +53,6 @@ print(malicious_counts.sort_values(by='Count', ascending=False).head(10))
 
 print(data['day'].unique())
 
-import matplotlib.pyplot as plt
-
-plt.rcParams['figure.figsize'] = (18, 7)
-
-color = plt.cm.copper(np.linspace(0, 1, 40))
-data['Methods'].value_counts().head(40).plot.bar(color=color)
-plt.title('Most Popular Methods by the Users', fontsize=20)
-plt.show()
-
-plt.rcParams['figure.figsize'] = (18, 7)
-
-color = plt.cm.copper(np.linspace(0, 1, 40))
-data['month'].value_counts().head(40).plot.bar(color='cyan')
-plt.title('Most Popular Months of Logins', fontsize=20)
-plt.show()
-
-plt.rcParams['figure.figsize'] = (18, 7)
-
-color = plt.cm.copper(np.linspace(0, 1, 40))
-data['day'].value_counts().head(40).plot.bar(color='tomato')
-plt.title('Most Popular Days of Logins', fontsize=20)
-plt.show()
-
-plt.rcParams['figure.figsize'] = (18, 7)
-
-color = plt.cm.Wistia(np.linspace(0, 1, 40))
-data['Status'].value_counts().head(40).plot.bar(color='seagreen')
-plt.title('Most Popular statuses for the Users', fontsize=20)
-plt.show()
 
 #STREAMLIT
 import streamlit as st
@@ -124,23 +96,6 @@ data['TimeInterval'] = data['Time']  # You can adjust the time interval granular
 data['Status'] = data['Status']
 
 from scipy.stats import zscore
-
-import streamlit_vertical_slider as svs
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # Right-side content (Traffic Anomaly Detection)

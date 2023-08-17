@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import os
 
@@ -13,7 +12,7 @@ data['Time'] = data['Time'].str.split(':', n=1, expand=True)
 
 data['Time'] = pd.to_datetime(data['Time'], format='%d%m%Y', errors='ignore')
 
-data = data.rename(columns={'Staus': 'Status'}, index={'ONE': 'one'})
+#data = data.rename(columns={'Staus': 'Status'}, index={'ONE': 'one'})
 data['URL'] = data['URL'].map(lambda x: x.lstrip('0'))
 data.describe()
 
@@ -29,7 +28,6 @@ if data['URL'].str.contains('.php').any():
 elif data['URL'].str.contains('.js').any():
     data['URL_new'] = data['URL'].str.split('/').str[3]
 
-print(data)
 
 # Detecting Malicious Activity
 malicious_extension = 'php?id='  # Example malicious extensions
@@ -86,14 +84,15 @@ def display_methods_distribution():
 select_pages_list = ["Status Distribution", "Day-wise Distribution", "Month-wise Distribution", "Methods Distribution"]
 
 # Display selected page content
-st.title("Web log Analysis \n---")
-
+st.markdown("<h1 style='text-align: center; font-size: 100px;'>Web log Analysis \n</h1>", unsafe_allow_html=True)
+st.title("*\n---")
 print(data["Time"].head())
 
 # Create features: IP, Time, Status
 data['IP'] = data['IP']
 data['TimeInterval'] = data['Time']  # You can adjust the time interval granularity
 data['Status'] = data['Status']
+
 
 from scipy.stats import zscore
 
@@ -102,7 +101,7 @@ from scipy.stats import zscore
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("## Basic Statistics")
+    st.markdown("<h1 style='text-align: center;'>Basic Statistics</h1>", unsafe_allow_html=True)
 
     # Sidebar navigation
     selected_page = st.selectbox("", select_pages_list)
@@ -118,7 +117,7 @@ with col1:
 
 
 with col2:
-    st.markdown("## Traffic Anomaly Detection")
+    st.markdown("<h1 style='text-align: center;'>Traffic Anomaly Detection</h1>", unsafe_allow_html=True)
 
     threshold = st.slider("Threshold for Z-Score Anomaly Detection", min_value=1.0, max_value=1.9, value=1.5, step=0.05)
     st.write("Best below 1.6 threshold")

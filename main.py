@@ -59,7 +59,7 @@ st.set_page_config(page_title="Web Log Analysis", page_icon=":desktop_computer:"
 
 
 # Function to display Status distribution plot
-def display_status_distribution():  # I WANT TO MAKE IT Options no radio
+def display_status_distribution():
     st.markdown("#### Status Distribution")
     st.bar_chart(data['Status'].value_counts().head(40))
 

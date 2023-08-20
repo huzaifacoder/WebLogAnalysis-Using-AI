@@ -1,16 +1,17 @@
 import pandas as pd
 import os
-
+from datetime import datetime
 
 cwd_join = os.getcwd() + "\\"
 database_rel = os.path.relpath('Database\\weblog.csv')
 database_abs = cwd_join + database_rel
 data = pd.read_csv(database_abs)
 
-data['Time'] = data['Time'].map(lambda x: x.lstrip('['))
-data['Time'] = data['Time'].str.split(':', n=1, expand=True)
+
+
 
 data['Time'] = pd.to_datetime(data['Time'], format='%d%m%Y', errors='ignore')
+#print(data['Time'].head())
 
 #data = data.rename(columns={'Staus': 'Status'}, index={'ONE': 'one'})
 data['URL'] = data['URL'].map(lambda x: x.lstrip('0'))
@@ -18,6 +19,9 @@ data.describe()
 
 data['month'] = data['Time'].str.slice(3, 6)
 data['day'] = data['Time'].str.slice(0, 2)
+
+data['day'] = pd.to_numeric(data['day'], errors='coerce')  # Convert non-numeric values to NaN
+data['day'] = data['day'].clip(lower=1, upper=30)
 
 data['Methods'] = data['URL'].str.split('/').str[0]
 
@@ -130,6 +134,8 @@ with col2:
         return anomalies
 
 
+
+
     def visualize_detected_anomalies(anomalies):
         st.subheader("Detected Anomalies:")
         st.write(anomalies)
@@ -153,3 +159,45 @@ with col2:
         # Find IP with the highest TrafficCount
         ip_with_most_traffic = anomaly_counts.loc[anomaly_counts['AnomalyCount'].idxmax(), 'IP']
         st.subheader(f"IP with the Most Traffic: [{ip_with_most_traffic}] within the given threshold")
+
+
+# Replace "/" with "-" and map months, and remove "["
+def preprocess_time(time_str):
+    if time_str.startswith('['):
+        time_str = time_str.replace('/', '-').replace('[', '')
+        datetime_obj = datetime.strptime(time_str, '%d-%b-%Y:%H:%M:%S')
+        formatted_date = datetime_obj.strftime('%Y-%m-%d')
+        month_numeric = datetime_obj.month
+        return datetime_obj, formatted_date, month_numeric
+    return None, None, None
+
+print(data.columns)
+
+data[['Times', 'FormattedDate', 'MonthNumeric']] = data['Time'].apply(preprocess_time).apply(pd.Series)
+print(data['Times'])
+
+import numpy as np
+from datetime import datetime
+from statsmodels.tsa.arima.model import ARIMA
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+
+# Load and preprocess your data as shown in the previous code snippets
+
+# Splitting data into training and testing sets
+train_size = int(0.8 * len(data))
+train_data = data.iloc[:train_size]
+test_data = data.iloc[train_size:]
+
+# Fit ARIMA model
+order = (5, 1, 0)  # Example order (p, d, q)
+model = ARIMA(train_data['TrafficCount'], order=order)
+model_fit = model.fit(disp=0)
+
+# Make predictions
+predictions = model_fit.predict(start=len(train_data), end=len(train_data) + len(test_data) - 1, typ='levels')
+
+# Evaluate model
+mse = mean_squared_error(test_data['TrafficCount'], predictions)
+rmse = np.sqrt(mse)
+print("Root Mean Squared Error:", rmse)

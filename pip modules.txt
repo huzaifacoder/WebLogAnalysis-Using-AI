@@ -1,0 +1,8 @@
+pip install pandas
+pip install numpy
+pip install <streamlit>==<1.13.0>
+pip install statsmodels
+pip install matplotlib
+pip install scikit-learn
+pip install plotly
+pip install tensorflow

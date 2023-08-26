@@ -7,9 +7,6 @@ database_rel = os.path.relpath('Database\\weblog.csv')
 database_abs = cwd_join + database_rel
 data = pd.read_csv(database_abs)
 
-
-
-
 data['Time'] = pd.to_datetime(data['Time'], format='%d%m%Y', errors='ignore')
 #print(data['Time'].head())
 
@@ -119,6 +116,7 @@ with col1:
     elif selected_page == "Methods Distribution":
         display_methods_distribution()
 
+global grouped
 
 with col2:
     st.markdown("<h1 style='text-align: center;'>Traffic Anomaly Detection</h1>", unsafe_allow_html=True)
@@ -128,12 +126,11 @@ with col2:
 
 
     def detect_anomalies(data, threshold):
+
         grouped = data.groupby(['TimeInterval', 'IP', 'Status']).size().reset_index(name='TrafficCount')
         grouped['ZScore'] = grouped.groupby(['TimeInterval', 'Status'])['TrafficCount'].transform(zscore)
         anomalies = grouped[grouped['ZScore'] > threshold]
         return anomalies
-
-
 
 
     def visualize_detected_anomalies(anomalies):
@@ -162,42 +159,42 @@ with col2:
 
 
 # Replace "/" with "-" and map months, and remove "["
-def preprocess_time(time_str):
-    if time_str.startswith('['):
-        time_str = time_str.replace('/', '-').replace('[', '')
-        datetime_obj = datetime.strptime(time_str, '%d-%b-%Y:%H:%M:%S')
-        formatted_date = datetime_obj.strftime('%Y-%m-%d')
-        month_numeric = datetime_obj.month
-        return datetime_obj, formatted_date, month_numeric
-    return None, None, None
-
-print(data.columns)
-
-data[['Times', 'FormattedDate', 'MonthNumeric']] = data['Time'].apply(preprocess_time).apply(pd.Series)
-print(data['Times'])
-
-import numpy as np
-from datetime import datetime
-from statsmodels.tsa.arima.model import ARIMA
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-
-# Load and preprocess your data as shown in the previous code snippets
-
-# Splitting data into training and testing sets
-train_size = int(0.8 * len(data))
-train_data = data.iloc[:train_size]
-test_data = data.iloc[train_size:]
-
-# Fit ARIMA model
-order = (5, 1, 0)  # Example order (p, d, q)
-model = ARIMA(train_data['TrafficCount'], order=order)
-model_fit = model.fit(disp=0)
-
-# Make predictions
-predictions = model_fit.predict(start=len(train_data), end=len(train_data) + len(test_data) - 1, typ='levels')
-
-# Evaluate model
-mse = mean_squared_error(test_data['TrafficCount'], predictions)
-rmse = np.sqrt(mse)
-print("Root Mean Squared Error:", rmse)
+#def preprocess_time(time_str):
+#    if time_str.startswith('['):
+#        time_str = time_str.replace('/', '-').replace('[', '')
+#        datetime_obj = datetime.strptime(time_str, '%d-%b-%Y:%H:%M:%S')
+#        formatted_date = datetime_obj.strftime('%Y-%m-%d')
+#        month_numeric = datetime_obj.month
+#        return datetime_obj, formatted_date, month_numeric
+#    return None, None, None
+#
+#print(data.columns)
+#
+#data[['Times', 'FormattedDate', 'MonthNumeric']] = data['Time'].apply(preprocess_time).apply(pd.Series)
+#print(data['Times'])
+#
+#import numpy as np
+#from datetime import datetime
+#from statsmodels.tsa.arima.model import ARIMA
+#from sklearn.model_selection import train_test_split
+#from sklearn.metrics import mean_squared_error
+#
+## Load and preprocess your data as shown in the previous code snippets
+#
+## Splitting data into training and testing sets
+#train_size = int(0.8 * len(data))
+#train_data = data.iloc[:train_size]
+#test_data = data.iloc[train_size:]
+#
+## Fit ARIMA model
+#order = (5, 1, 0)  # Example order (p, d, q)
+#model = ARIMA(grouped['TrafficCount'], order=order)
+#model_fit = model.fit(disp=0)
+#
+## Make predictions
+#predictions = model_fit.predict(start=len(train_data), end=len(train_data) + len(test_data) - 1, typ='levels')
+#
+## Evaluate model
+#mse = mean_squared_error(grouped['TrafficCount'], predictions)
+#rmse = np.sqrt(mse)
+#print("Root Mean Squared Error:", rmse)

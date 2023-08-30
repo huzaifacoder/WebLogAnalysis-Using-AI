@@ -9,9 +9,14 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 import time
+import os
 
+cwd_join = os.getcwd() + "\\"
+database_rel = os.path.relpath('Database\\weblog_cleaned.csv')
+database_abs = cwd_join + database_rel
+log_data = pd.read_csv(database_abs)
 
-log_data = pd.read_csv('Database\\weblog.csv')
+log_data = pd.read_csv('Database\\weblog_cleaned.csv')
 print(log_data.head())
 
 # Create new columns for day, month, year, and time
@@ -24,19 +29,52 @@ log_data['URL'] = log_data['URL'].str.extract(r'(\S+)\sHTTP/1\.1')
 
 page_views = log_data['URL'].value_counts()  # Count of page views for each URL
 
+
 # Perform analysis based on available columns
-unique_ips = log_data['IP'].nunique()  # Count the number of unique IP addresses
-unique_urls = log_data['URL'].nunique()  # Count the number of unique URLs
+unique_ips = log_data['IP'].unique()  # Count the number of unique IP addresses
+
+unique_urls = log_data['URL'].unique()  # Count the number of unique URLs
 status_counts = log_data['Status'].value_counts()  # Count the occurrences of each status code
 
+
+#print(unique_ips)
+#print(unique_ips)
+#print(unique_ips)
+
+
 # Perform exploratory analysis
-total_requests = len(log_data)  # Total number of requests
+total_requests = len(log_data["IP"])  # Total number of requests
+print(total_requests)
+print(total_requests)
+print(total_requests)
+
 unique_visitors = log_data['IP'].nunique()  # Number of unique IP addresses
 aggregated_data = log_data.groupby('Date').agg({'IP': 'count'}).reset_index()
+
+
 aggregated_data.columns = ['Date', 'request_count']
 aggregated_data.set_index('Date', inplace=True)
 
 target_variable = aggregated_data['request_count']
+print()
+print(aggregated_data['request_count'].head(15))
+print()
+
+import re
+df_str = aggregated_data['request_count'].to_string(index=False)
+
+pattern = r"\S+\s+(\d+)"
+
+# Find all matches using the regex pattern
+matches = re.findall(pattern, df_str)
+
+# Store the extracted data in a list
+extracted_data = [int(match) for match in matches]
+
+np.array(extracted_data)
+print(extracted_data)
+
+
 target_variable.plot(figsize=(12, 6))
 plt.xlabel('Timestamp')
 plt.ylabel('Total Requests')
@@ -49,19 +87,23 @@ differenced_data = target_variable.diff().dropna()
 
 # Step 4: Determining ARIMA Parameters (For DEV use ONLY)
 # Plot the autocorrelation and partial autocorrelation functions
-fig, ax = plt.subplots(figsize=(12, 6))
-plot_acf(differenced_data, ax=ax, lags=30)
-plt.xlabel('Lags')
-plt.ylabel('Autocorrelation')
-plt.title('Autocorrelation Function')
-plt.show()
 
-fig, ax = plt.subplots(figsize=(12, 6))
-plot_pacf(differenced_data, ax=ax, lags=25)
-plt.xlabel('Lags')
-plt.ylabel('Partial Autocorrelation')
-plt.title('Partial Autocorrelation Function')
-plt.show()
+
+#fig, ax = plt.subplots(figsize=(12, 6))
+#plot_acf(differenced_data, ax=ax, lags=30)
+#plt.xlabel('Lags')
+#plt.ylabel('Autocorrelation')
+#plt.title('Autocorrelation Function')
+#plt.show()
+
+
+#fig, ax = plt.subplots(figsize=(12, 6))
+#plot_pacf(differenced_data, ax=ax, lags=25)
+#plt.xlabel('Lags')
+#plt.ylabel('Partial Autocorrelation')
+#plt.title('Partial Autocorrelation Function')
+#plt.show()
+
 
 # Determine the order (p, d, q) of the ARIMA model based on the plots and ADF test
 
@@ -92,7 +134,7 @@ mae = mean_absolute_error(test_data, predictions)
 print(f"RMSE: {rmse:.2f}")
 print(f"MAE: {mae:.2f}")
 
-pred_no = 7
+pred_no = 10
 
 future_predictions = model_fit.forecast(steps=int(pred_no))  # Example: Generate 10 future predictions
 
@@ -140,12 +182,13 @@ import plotly.graph_objects as go
 import time
 from tensorflow import keras
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
+from tensorflow.keras.layers import LSTM, Dense, Activation, Dropout
 
 
 # Normalize data
 scaler = MinMaxScaler()
 normalized_data = scaler.fit_transform(target_variable.values.reshape(-1, 1))
+print(normalized_data.shape)
 
 # Split data into train and test sets
 train_size = int(len(normalized_data) * 0.8)
@@ -171,19 +214,31 @@ X_test, y_test = np.array([seq for seq, target in test_sequences]), np.array([ta
 
 # Build RNN model
 model = Sequential([
-    LSTM(64, activation='relu', input_shape=(seq_length, 1 )),
-
-    Dense(1)
+    LSTM(128, activation='relu', input_shape=(seq_length, 1), return_sequences=True),
+    Dropout(0.2),  # Add dropout for regularization
+    LSTM(128, activation='relu', return_sequences=True),
+    Dropout(0.2),
+    LSTM(64, activation='relu', return_sequences=True),
+    Dropout(0.2),
+    LSTM(32, activation='relu', return_sequences=True),
+    Dropout(0.2),
+    LSTM(64, activation='relu'),
+    Dense(64),
+    Activation('relu'),
+    Dropout(0.2),
+    Dense(32),
+    Activation('relu'),
+    Dense(1, activation='linear')  # Use linear activation for regression
 ])
 
-
-model.compile(optimizer='adam', loss='mean_squared_error')
+# Compile the model
+model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mean_absolute_error'])
 
 # Train the model
-model.fit(X_train, y_train, epochs=70, batch_size=32, verbose=1)
+model.fit(X_train, y_train, epochs=45, batch_size=32, verbose=1)
 
 # Make predictions
-predictions = model.predict(X_test)
+predictions = model.predict(X_test) #############################################################
 
 # Denormalize predictions
 predictions = scaler.inverse_transform(predictions)
@@ -233,4 +288,27 @@ plt.ylabel('Predicted Value')
 plt.title('Predicted Values for Future Days')
 plt.legend()
 plt.grid()
+plt.show()
+
+max_value = 5000
+min_value = 100
+
+
+# Denormalize the predictions
+denormalized_predictions = denormalized_future_predictions * (max_value - min_value) + min_value
+#denormalized_value = 0.5 * (normalized_data + 1) * (max_value - min_value) + min_value
+
+
+# Plotting both original data and denormalized forecasted predictions
+plt.figure(figsize=(12, 6))
+
+# Plot denormalized forecasted predictions in blue
+plt.plot(days_ahead, denormalized_predictions, marker='o', linestyle='-', color='blue', label='Predicted Values')
+
+plt.xlabel('years ahead')
+plt.ylabel('Total Requests')
+plt.title('Web Log Data and Denormalized Predicted Values')
+plt.legend()
+plt.grid()
+
 plt.show()

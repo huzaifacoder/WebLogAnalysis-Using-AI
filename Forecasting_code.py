@@ -12,11 +12,11 @@ import time
 import os
 
 cwd_join = os.getcwd() + "\\"
-database_rel = os.path.relpath('Database\\weblog_cleaned.csv')
+database_rel = os.path.relpath('Test/Database/weblog_cleaned.csv')
 database_abs = cwd_join + database_rel
 log_data = pd.read_csv(database_abs)
 
-log_data = pd.read_csv('Database\\weblog_cleaned.csv')
+log_data = pd.read_csv('Test/Database/weblog_cleaned.csv')
 print(log_data.head())
 
 # Create new columns for day, month, year, and time
@@ -71,7 +71,7 @@ matches = re.findall(pattern, df_str)
 # Store the extracted data in a list
 extracted_data = [int(match) for match in matches]
 
-np.array(extracted_data)
+#np.array(extracted_data)
 print(extracted_data)
 
 
@@ -147,14 +147,14 @@ import matplotlib.pyplot as plt
 days_ahead = list(range(1, pred_no + 1))  # Adjust the range based on the number of days predicted
 
 # Plotting
-plt.figure(figsize=(10, 6))
-plt.plot(days_ahead, future_predictions, marker='o', linestyle='-', color='b', label='Predicted Values')
-plt.xlabel('Days Ahead')
-plt.ylabel('Predicted Requests')
-plt.title('Predicted Values for Future Days')
-plt.legend()
-plt.grid()
-plt.show()
+#plt.figure(figsize=(10, 6))
+#plt.plot(days_ahead, future_predictions, marker='o', linestyle='-', color='b', label='Predicted Values')
+#plt.xlabel('Days Ahead')
+#plt.ylabel('Predicted Requests')
+#plt.title('Predicted Values for Future Days')
+#plt.legend()
+#plt.grid()
+#plt.show()
 
 
 
@@ -183,6 +183,7 @@ import time
 from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Activation, Dropout
+import tensorflow as tf
 
 
 # Normalize data
@@ -237,11 +238,27 @@ model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mean_absolu
 # Train the model
 model.fit(X_train, y_train, epochs=45, batch_size=32, verbose=1)
 
+model.save("saved_model")
+
+# Save the model in HDF5 format
+model.save("model.h5")
+
+# Load the model in SavedModel format
+loaded_model_saved = tf.keras.models.load_model("saved_model")
+
+# Load the model in HDF5 format
+loaded_model_h5 = tf.keras.models.load_model("model.h5")
+
+
 # Make predictions
-predictions = model.predict(X_test) #############################################################
+#predictions = model.predict(X_test) #############################################################
+# Assuming you have test_data
+predictions = loaded_model_saved.predict(X_test)
+
 
 # Denormalize predictions
 predictions = scaler.inverse_transform(predictions)
+
 
 # Evaluate the model
 mse = mean_squared_error(test_data[seq_length:], predictions)

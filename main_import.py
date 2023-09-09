@@ -2,11 +2,11 @@ import pandas as pd
 import os
 
 cwd_join = os.getcwd() + "\\"
-database_rel = os.path.relpath('Database\\weblog.csv')
+database_rel = os.path.relpath('../Database/weblog.csv')
 database_abs = cwd_join + database_rel
 data = pd.read_csv(database_abs)
 
-data['Time'] = pd.to_datetime(data['Time'], format='%d%m%Y', errors='ignore')
+data['Time'] = pd.to_datetime(data['Time'], for1mat='%d%m%Y', errors='ignore')
 #print(data['Time'].head())
 
 #data = data.rename(columns={'Staus': 'Status'}, index={'ONE': 'one'})
@@ -85,7 +85,7 @@ select_pages_list = ["Status Distribution", "Day-wise Distribution", "Month-wise
 
 # Display selected page content
 st.markdown("<h1 style='text-align: center; font-size: 100px;'>Web log Analysis \n</h1>", unsafe_allow_html=True)
-st.title("*\n---")
+st.title("* Example\n---")
 print(data["Time"].head())
 
 # Create features: IP, Time, Status
@@ -158,17 +158,11 @@ with col2:
 
 with col3:
     from statsmodels.tsa.arima.model import ARIMA
-    import os
 
     import pandas as pd
     import numpy as np
     from sklearn.metrics import mean_squared_error, mean_absolute_error
     import streamlit as st
-
-    cwd_join = os.getcwd() + "\\"
-    database_rel = os.path.relpath('Database\\weblog_cleaned.csv')
-    database_abs = cwd_join + database_rel
-    log_data = pd.read_csv(database_abs)
 
     log_data = pd.read_csv('Database\\weblog_cleaned.csv')
     print(log_data.head())
@@ -256,7 +250,7 @@ with col3:
 
     days_ahead = list(range(1, pred_no + 1)) # Adjust the range based on the number of days predicted
 
-    from Forecasting_code import denormalized_future_predictions
+    from pages.Forecasting_code import denormalized_future_predictions
 
     # Create a new figure and axis
     fig, ax = plt.subplots(figsize=(10, 6))

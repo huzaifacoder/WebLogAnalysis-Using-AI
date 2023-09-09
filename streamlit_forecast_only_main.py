@@ -10,7 +10,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Activation, Dropout
 import tensorflow as tf
 
-from Forecasting_code import denormalized_future_predictions
+from pages.Forecasting_code import denormalized_future_predictions
 
 cwd_join = os.getcwd() + "\\"
 database_rel = os.path.relpath('Database\\weblog_cleaned.csv')

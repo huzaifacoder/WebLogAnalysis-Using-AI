@@ -89,7 +89,7 @@ model = Sequential([
 model.compile(optimizer='adam', loss='mean_squared_error')
 
 # Train the model
-model.fit(X_train, y_train, epochs=50, batch_size=32, verbose=1)
+model.fit(X_train, y_train, epochs=50, batch_size=64, verbose=1)
 
 # Make predictions
 predictions = model.predict(X_test)

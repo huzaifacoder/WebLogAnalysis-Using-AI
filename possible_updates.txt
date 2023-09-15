@@ -1,5 +1,5 @@
 1. Feedback tab
 2. About Project
-3. Forecasting
-4. Import data
+3. Forecasting - done
+4. Import data - done
 5. Export pdf

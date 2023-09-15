@@ -20,11 +20,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 import os
 
-cwd_join = os.getcwd() + "\\"
-database_rel = os.path.relpath('../Database/weblog.csv')
-database_abs = cwd_join + database_rel
-log_data = pd.read_csv(database_abs)
-
+log_data = pd.read_csv("weblog.csv")
 
 print(log_data.head())
 

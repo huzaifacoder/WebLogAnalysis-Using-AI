@@ -1,15 +1,13 @@
 import pandas as pd
 import os
 
-cwd_join = os.getcwd() + "\\"
-database_rel = os.path.relpath('../Database/weblog.csv')
-database_abs = cwd_join + database_rel
-data = pd.read_csv(database_abs)
+#cwd_join = os.getcwd() + "\\"
+#database_rel = os.path.relpath('/Database/weblog.csv')
+#database_abs = cwd_join + database_rel
+data = pd.read_csv('weblog.csv')
 
-data['Time'] = pd.to_datetime(data['Time'], for1mat='%d%m%Y', errors='ignore')
-#print(data['Time'].head())
+data['Time'] = pd.to_datetime(data['Time'], format='%d%m%Y', errors='ignore')
 
-#data = data.rename(columns={'Staus': 'Status'}, index={'ONE': 'one'})
 data['URL'] = data['URL'].map(lambda x: x.lstrip('0'))
 data.describe()
 
@@ -21,8 +19,7 @@ data['day'] = data['day'].clip(lower=1, upper=30)
 
 data['Methods'] = data['URL'].str.split('/').str[0]
 
-# if data['URL'].str.contains('.js').any():
-#   data['URL_new'] = data['URL'].str.split('/').str[3]
+
 if data['URL'].str.contains('.php').any():
     data['URL_new'] = data['URL'].str.split('/').str[1]
 elif data['URL'].str.contains('.js').any():
@@ -164,7 +161,7 @@ with col3:
     from sklearn.metrics import mean_squared_error, mean_absolute_error
     import streamlit as st
 
-    log_data = pd.read_csv('Database\\weblog_cleaned.csv')
+    log_data = pd.read_csv('weblog.csv')
     print(log_data.head())
 
     st.markdown("<h1 style='text-align: center;'>Forecast</h1>", unsafe_allow_html=True)
@@ -250,7 +247,7 @@ with col3:
 
     days_ahead = list(range(1, pred_no + 1)) # Adjust the range based on the number of days predicted
 
-    from pages.Forecasting_code import denormalized_future_predictions
+    from Forecasting_code import denormalized_future_predictions
 
     # Create a new figure and axis
     fig, ax = plt.subplots(figsize=(10, 6))

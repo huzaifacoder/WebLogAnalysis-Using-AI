@@ -149,23 +149,24 @@ try:
 
             # Step 6: Fit the ARIMA Model
 
-            order = (2, 3, 1)
-            model = ARIMA(train_data, order=order)
-            model_fit = model.fit()
+            #order = (2, 3, 1)
+            #model = ARIMA(train_data, order=order)
+            #model_fit = model.fit()
+#
+            ## Step 8: Evaluate the Model
+            #predictions = model_fit.forecast(steps=len(test_data))
+            #mse = mean_squared_error(test_data, predictions)
+            #rmse = np.sqrt(mse)
+            #mae = mean_absolute_error(test_data, predictions)
+            #print(f"RMSE: {rmse:.2f}")
+            #print(f"MAE: {mae:.2f}")
 
-            # Step 8: Evaluate the Model
-            predictions = model_fit.forecast(steps=len(test_data))
-            mse = mean_squared_error(test_data, predictions)
-            rmse = np.sqrt(mse)
-            mae = mean_absolute_error(test_data, predictions)
-            print(f"RMSE: {rmse:.2f}")
-            print(f"MAE: {mae:.2f}")
+
+            #future_predictions = model_fit.forecast(steps=int(pred_no))  # Example: Generate 10 future predictions
+
+            #print(future_predictions)  # Example: Generate 10 future predictions
 
             pred_no = 10
-
-            future_predictions = model_fit.forecast(steps=int(pred_no))  # Example: Generate 10 future predictions
-
-            print(future_predictions)  # Example: Generate 10 future predictions
 
             import matplotlib.pyplot as plt
 
@@ -177,8 +178,6 @@ try:
             import numpy as np
             import matplotlib.pyplot as plt
             from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-            # import plotly.graph_objects as go
-            # import plotly.express as px
             import time
             import pandas as pd
             import numpy as np

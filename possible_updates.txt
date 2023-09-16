@@ -3,3 +3,13 @@
 3. Forecasting - done
 4. Import data - done
 5. Export pdf
+6. Implementation of isolation forest for anomaly detection
+7. Which web log data can you upload
+8. work on anamoly detection
+9. Improve data import function to handle different format of data
+10.show format of data columns user can upload and see analysis
+11. create a virtual environment
+12. activate virtual envorment
+13. install libraries
+14. python run .......py
+15. pip freeze > requirements.txt

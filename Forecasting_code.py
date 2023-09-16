@@ -4,8 +4,6 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-#import plotly.graph_objects as go
-#import plotly.express as px
 import time
 import pandas as pd
 import numpy as np
@@ -13,7 +11,6 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 import streamlit as st
-import plotly.graph_objects as go
 import time
 from tensorflow import keras
 from tensorflow.keras.models import Sequential

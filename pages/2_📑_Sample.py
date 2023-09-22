@@ -82,7 +82,7 @@ select_pages_list = ["Status Distribution", "Day-wise Distribution", "Month-wise
 
 # Display selected page content
 st.markdown("<h1 style='text-align: center; font-size: 100px;'>Web log Analysis \n</h1>", unsafe_allow_html=True)
-st.title("* Example\n---")
+st.title("* Sample\n---")
 print(data["Time"].head())
 
 # Create features: IP, Time, Status

@@ -7,3 +7,4 @@ statsmodels==0.14.0
 streamlit==1.13.0
 tensorflow==2.13.0
 altair==4.2.2
+jinja2==3.0.0

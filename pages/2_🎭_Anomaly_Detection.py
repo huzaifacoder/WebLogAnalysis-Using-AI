@@ -6,24 +6,27 @@ from sklearn.impute import SimpleImputer
 import streamlit as st
 
 st.markdown("<h1 style='text-align: center;'>Anomaly Detection</h1>", unsafe_allow_html=True)
+
+st.write("FILE FORMAT: .csv")
+st.write("COLUMNS REQUIRED : IP, Time, URL, Status -- Place the dataset/database collumn in given order")
 df = st.file_uploader("Upload your file here...")
 
 
 if df is not None:  # Check if a file is uploaded
     # Read the CSV data only if a file is uploaded
     log_data = pd.read_csv(df)
+    #log_data["Time"] = log_data.iloc[1]
+    log_data["Time"] = log_data.iloc[:, 1]
+    log_data["Time"] = pd.to_datetime(log_data["Time"], format='%d%m%Y', errors='ignore')
 
-    log_data["Time"] = log_data.iloc[1]
-    pd.to_datetime(log_data['Time'], format='%d%m%Y', errors='ignore')
+    log_data['URL'] = log_data.iloc[:, 2]
+    #log_data['URL'].map(lambda x: x.lstrip('0'))
 
-    log_data['URL'] = log_data.iloc[2]
-    log_data['URL'].map(lambda x: x.lstrip('0'))
+    #log_data['month'] = log_data['Time'].str.slice(3, 6)
+    #log_data['day'] = log_data['Time'].str.slice(0, 2)
 
-    log_data['month'] = log_data['Time'].str.slice(3, 6)
-    log_data['day'] = log_data['Time'].str.slice(0, 2)
-
-    log_data['day'] = pd.to_numeric(log_data['day'], errors='coerce')  # Convert non-numeric values to NaN
-    log_data['day'] = log_data['day'].clip(lower=1, upper=30)
+    #log_data['day'] = pd.to_numeric(log_data['day'], errors='coerce')  # Convert non-numeric values to NaN
+    #log_data['day'] = log_data['day'].clip(lower=1, upper=30)
 
     log_data['Methods'] = log_data['URL'].str.split('/').str[0]
 
@@ -62,7 +65,7 @@ if df is not None:  # Check if a file is uploaded
 
         # Filter and display anomalies
         anomalies = log_data[log_data['Anomaly'] == -1]  # -1 indicates an anomaly
-        prettyfied_anomalies = anomalies.iloc[:, [0, 1, 2, 3]]
+        prettyfied_anomalies = anomalies.iloc[:, [0, 1, 2, 3, -1]]
         print(anomalies)
         st.write("Detected Anomalies:")
         st.write(prettyfied_anomalies)

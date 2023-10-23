@@ -18,6 +18,9 @@ st.subheader(
     """
 )
 
+st.write("FILE FORMAT: .csv")
+st.write("COLUMNS REQUIRED : IP, Time, URL, Status -- Place the dataset/database collumn in given order")
+
 data = st.file_uploader("Upload your file here...")
 
 

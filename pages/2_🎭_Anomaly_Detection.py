@@ -13,9 +13,11 @@ if df is not None:  # Check if a file is uploaded
     # Read the CSV data only if a file is uploaded
     log_data = pd.read_csv(df)
 
-    log_data['Time'] = pd.to_datetime(log_data['Time'], format='%d%m%Y', errors='ignore')
+    log_data["Time"] = log_data.iloc[1]
+    pd.to_datetime(log_data['Time'], format='%d%m%Y', errors='ignore')
 
-    log_data['URL'] = log_data['URL'].map(lambda x: x.lstrip('0'))
+    log_data['URL'] = log_data.iloc[2]
+    log_data['URL'].map(lambda x: x.lstrip('0'))
 
     log_data['month'] = log_data['Time'].str.slice(3, 6)
     log_data['day'] = log_data['Time'].str.slice(0, 2)
@@ -33,18 +35,18 @@ if df is not None:  # Check if a file is uploaded
         selected_features = ['IP', 'URL', 'Status']
 
         # Filter the DataFrame to remove rows with '2018]' and '2017]' in 'Status' column
-        df_filtered = log_data[~log_data['Status'].str.contains('2018\]')]
-        df_filtered = df_filtered[~df_filtered['Status'].str.contains('2017\]')]
+        #df_filtered = log_data[~log_data['Status'].str.contains('2018\]')]
+        #df_filtered = df_filtered[~df_filtered['Status'].str.contains('2017\]')]
         #print(df_filtered["Status"].value_counts())
 
         # Initialize label encoder
         label_encoder = LabelEncoder()
 
         # Encode the 'Status' column in the filtered DataFrame
-        df_filtered['Status_encoded'] = label_encoder.fit_transform(df_filtered['Status'])
+        log_data['Status_encoded'] = label_encoder.fit_transform(log_data['Status'])
 
         # Encode categorical features (IP and URL) to numeric values
-        data_encoded = pd.get_dummies(df_filtered[selected_features], drop_first=True)
+        data_encoded = pd.get_dummies(log_data[selected_features], drop_first=True)
 
         #print(data_encoded.head(5))
 
@@ -56,10 +58,10 @@ if df is not None:  # Check if a file is uploaded
         anomaly_predictions = model.predict(data_encoded)
 
         # Add the anomaly predictions to the original filtered dataset
-        df_filtered['Anomaly'] = anomaly_predictions
+        log_data['Anomaly'] = anomaly_predictions
 
         # Filter and display anomalies
-        anomalies = df_filtered[df_filtered['Anomaly'] == -1]  # -1 indicates an anomaly
+        anomalies = log_data[log_data['Anomaly'] == -1]  # -1 indicates an anomaly
         prettyfied_anomalies = anomalies.iloc[:, [0, 1, 2, 3]]
         print(anomalies)
         st.write("Detected Anomalies:")
